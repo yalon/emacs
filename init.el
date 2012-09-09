@@ -13,11 +13,11 @@
 
 (setq in-terminal (not window-system))
 
-(if (not in-terminal)
-    (server-start))
+;;(if (not in-terminal)
+;;    (server-start))
 
 ; enable all disabled commands
-(setq disabled-command-function nil)
+;;(setq disabled-command-function nil)
 
 (defun autoload-and-run (symbol file interactive callback)
   (autoload symbol file nil interactive)
@@ -102,6 +102,8 @@
               (mode . javascript-mode)
               (mode . js-mode)
               (mode . css-mode)
+	      (mode . coffee-mode)
+	      (mode . sass-mode)
               )
              )
             ("Programming"
@@ -211,6 +213,17 @@
 (autoload 'markdown-mode "markdown-mode.el" nil t)
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
+; Coffee
+(autoload 'coffee-mode (in-modes-d "coffee-mode/coffee-mode.el") nil t)
+(add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+
+; HAML (required by SASS)
+(add-to-list 'load-path (in-modes-d "haml-mode"))
+
+; SASS
+(autoload 'sass-mode (in-modes-d "sass-mode/sass-mode.el") nil t)
+(add-to-list 'auto-mode-alist '("\\.sass$" . sass-mode))
+
 ; ------- Modes ---------
 ; ido
 (ido-mode)
@@ -229,14 +242,14 @@
 (global-set-key (kbd "C-x i") 'iedit-mode)
 
 ; helm mode
-(setq helm-input-idle-delay 0)
-(add-to-list 'load-path (in-modes-d "helm"))
-(require 'helm-config)
-(helm-mode t)
-(global-set-key (kbd "C-c h") 'helm-mini)
-(global-set-key (kbd "M-i") 'helm-semantic-or-imenu)
-(global-set-key (kbd "C-x y") 'helm-show-kill-ring)
-(global-set-key (kbd "M-x") 'helm-M-x)
+;;(setq helm-input-idle-delay 0)
+;;(add-to-list 'load-path (in-modes-d "helm"))
+;;(require 'helm-config)
+;;(helm-mode t)
+;;(global-set-key (kbd "C-c h") 'helm-mini)
+;;(global-set-key (kbd "M-i") 'helm-semantic-or-imenu)
+;;(global-set-key (kbd "C-x y") 'helm-show-kill-ring)
+;;(global-set-key (kbd "M-x") 'helm-M-x)
 
 ; show-paren
 (show-paren-mode)
@@ -277,23 +290,23 @@
 	     (setq autopair-dont-activate t)))
 
 ; ace-jump - quickly navigate to any character
-(autoload 'ace-jump-char-mode (in-modes-d "ace-jump-mode/ace-jump-mode.el") nil t)
-(global-set-key (kbd "C-x j") 'ace-jump-char-mode)
+;;(autoload 'ace-jump-char-mode (in-modes-d "ace-jump-mode/ace-jump-mode.el") nil t)
+;;(global-set-key (kbd "C-x j") 'ace-jump-char-mode)
 ;   only use lowercase letters for lookup
-(setq ace-jump-mode-move-keys
-  (nconc (loop for i from ?a to ?z collect i)))
+;;(setq ace-jump-mode-move-keys
+;;  (nconc (loop for i from ?a to ?z collect i)))
 
 
-(defun my/set-super-char-to-ace-jump-mode (c)
-  (global-set-key
-         (read-kbd-macro (concat "s-" (string c)))
-         `(lambda () (interactive) (ace-jump-char-mode ,c))))
+;;(defun my/set-super-char-to-ace-jump-mode (c)
+;;  (global-set-key
+;;         (read-kbd-macro (concat "s-" (string c)))
+;;         `(lambda () (interactive) (ace-jump-char-mode ,c))))
 
-(unless (string-equal system-type "windows-nt")
-  ;bind most printable characters to S-<character>
-  (loop for c from ?\" to ?~ do (my/set-super-char-to-ace-jump-mode c))
-  (loop for c in (list ?! ?@ ?# ?$ ?% ?^ ?& ?*) do (my/set-super-char-to-ace-jump-mode c))
-  )
+;;(unless (string-equal system-type "windows-nt")
+;;  ;bind most printable characters to S-<character>
+;;  (loop for c from ?\" to ?~ do (my/set-super-char-to-ace-jump-mode c))
+;;  (loop for c in (list ?! ?@ ?# ?$ ?% ?^ ?& ?*) do (my/set-super-char-to-ace-jump-mode c))
+;;  )
 
 ; drag stuff
 (add-to-list 'load-path (in-modes-d "drag-stuff"))
@@ -315,8 +328,8 @@
 
 ; nyan-mode (no .emacs.d is whole without it)
 (autoload 'nyan-mode (in-modes-d "nyan-mode/nyan-mode.el") nil t)
-(unless in-terminal
-  (nyan-mode t))
+;(unless in-terminal
+;  (nyan-mode t))
 
 ; ------- Utilities -----
 
@@ -372,9 +385,17 @@
     (require 'pbcopy)
     (turn-on-pbcopy)
     ))
+(setq x-select-enable-clipboard t)
+(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+
 
 ; pomodoro - time management technique
 (autoload 'pomodoro "pomodoro.el" nil t)
+
+; doremi
+(add-to-list 'load-path (in-utils-d "doremi"))
+(require 'doremi)
+(require 'doremi-frm)
 
 ; ------- Keyboard shortcuts -----
 ; F keys
